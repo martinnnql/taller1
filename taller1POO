@@ -1,0 +1,125 @@
+package taller;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+public class tallerPOO {
+
+	public static void main(String[] args) throws FileNotFoundException {
+		// TODO Auto-generated method stub
+		Scanner s = new Scanner(System.in);
+		int opcion_menu1;
+		int opcion_usuarios;
+		
+		do {
+			System.out.println("1) Menu de Usuarios \n2) Menu de Analisis \n3) Salir");
+			opcion_menu1 = s.nextInt();
+			
+			switch (opcion_menu1) {
+			
+			case 1: // Menu de Usuarios 
+				
+				boolean acceso = false;
+				
+				while (!acceso) {
+					//pedir usuarios y contra
+					s.nextLine();
+					System.out.println("Usuario: ");
+					String nombre_usuario = s.nextLine();
+				
+					
+					System.out.println("Contraseña: ");
+					String contraseña_intento = s.nextLine();
+					
+					// leer usuarios.txt
+					File arch = new File("Usuarios.txt.txt");
+					Scanner sarch = new Scanner(arch);
+					
+					boolean encontrado = false;
+					
+					while (sarch.hasNextLine()) {
+						String linea = sarch.nextLine();
+						String[] partes = linea.split(";");
+						
+						String usuario = partes[0];
+						String contraseña = partes[1];
+						
+						//hacer comprobacion de usuario
+						
+						if (nombre_usuario.equals(usuario) && contraseña_intento.equals(contraseña)) {
+							acceso = true;
+							encontrado = true;
+							
+							if (acceso == true) {
+								//Menu dentro de usuarios
+								do {
+									System.out.println("\nBienvenido "+nombre_usuario+"!");
+									System.out.println("\n Que deseas realizar? \n1) Registrar actividad. \n2) Modificar actividad. \n3) Eliminar actividad. \n4) Cambiar contraseña. \n5) Salir");
+									opcion_usuarios = s.nextInt();
+									
+									switch (opcion_usuarios) {
+									case 1: 
+										//Registrar Actividad
+										
+										break;
+									case 2:
+										// Modificar actividad
+										
+										break;
+									case 3:
+										//Eliminar actividad
+										
+										break;
+									case 4:
+										//Cambiar contraseña
+										
+										break;
+									case 5:
+										System.out.println("Volviendo al menu...\n");
+										break;
+									default:
+										System.err.println("Ingrese una opcion valida.\n");
+									}
+									
+									
+									
+								}while (opcion_usuarios != 5);
+								
+							
+							
+							} // corchete if acceso true
+						}
+					
+					
+				} //corchete del while para leer el usuarios.txt
+				sarch.close();
+				
+				if (!encontrado) {
+					System.out.println("Acceso denegado.");
+					
+			} //corchete del while !acceso
+			
+			}
+				
+				break;
+			case 2:
+				//Menu de Analisis
+				
+				
+				
+				
+				
+				break;
+			case 3:
+				System.out.println("Saliendo...");
+				break;
+			
+			default:
+				System.err.println("Ingrese una opcion valida.");
+			}
+		}while (opcion_menu1 != 3);
+		
+	}
+
+}
