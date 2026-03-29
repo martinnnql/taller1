@@ -13,6 +13,7 @@ public class tallerPOO {
 		Scanner s = new Scanner(System.in);
 		int opcion_menu1;
 		int opcion_usuarios;
+		int opcionModificar;
 		
 		do {
 			System.out.println("1) Menu de Usuarios \n2) Menu de Analisis \n3) Salir");
@@ -154,6 +155,83 @@ public class tallerPOO {
 										break;
 									case 2:
 										// Modificar actividad
+										System.out.println("Cual actividad deseas modificar?\n");
+										opcionModificar = s.nextInt();
+										s.nextLine();
+										
+										String[] fechas = new String[300]; // 300 por ser la cant maxima de actividades
+										int[] horas = new int[300];
+										String[] actividades = new String[300];
+										
+										int contador = 0;
+										
+										// leer nuevamente el txt registros
+										File archReg = new File("Registros.txt");
+										Scanner sarchReg = new Scanner(archReg);
+										
+										while (sarchReg.hasNextLine()) {
+											String lineaReg = sarchReg.nextLine();
+											String[] partesReg = lineaReg.split(";");
+											
+											String usuarioReg = partesReg[0];
+											
+											//filtrar para mostrar solo las actividades del usuario ingresado
+											if ( usuarioReg.equals(nombre_usuario)) {
+												fechas[contador] = partesReg[1];
+												horas[contador] = Integer.parseInt(partesReg[2]);
+												actividades[contador] = partesReg[3];
+												contador++;
+											}
+											
+											
+										} //while sarch hasnextline
+										sarchReg.close();
+										
+										// ordenar fechas de mas viejo a mas nuevo con bubble sort
+										for (int i = 0; i < contador - 1; i++) {
+											for (int j = 0; j < contador - i - 1; j++) {
+												String[] fecha1 = fechas[j].split("/");
+												String[] fecha2 = fechas[j+1].split("/");
+												
+												int dia1 = Integer.parseInt(fecha1[0]);
+												int mes1 = Integer.parseInt(fecha1[1]);
+												int año1 = Integer.parseInt(fecha1[2]);
+
+												int dia2 = Integer.parseInt(fecha2[0]);
+												int mes2 = Integer.parseInt(fecha2[1]);
+												int año2 = Integer.parseInt(fecha2[2]);
+												
+												//Comparar e intercambiar
+												if (año1 > año2 || (año1 == año2 && mes1 > mes2) || (año1 == año2 && mes1 == mes2 && dia1 > dia2)) {
+													
+													String auxFecha = fechas[j];
+													fechas[j] = fechas[j+1];
+													fechas[j+1] = auxFecha;
+													
+													int auxHoras = horas[j];
+													horas[j] = horas[j+1];
+													horas[j+1] = auxHoras;
+													
+													String auxAct = actividades[j];
+													actividades[j] = actividades[j+1];
+													actividades[j+1] = auxAct;
+													
+													
+													}
+												}
+											}
+										//mostrar registro
+										if (contador == 0) {
+											System.err.println("No hay actividades registradas.");
+											
+										} else {
+											for (int i = 0; i < contador; i++) {
+												System.out.println((i + 1) + ") " + fechas[i] + ";" + horas[i] + ";" + actividades[i]);
+												
+											}	
+									}
+										
+										
 										
 										
 										
@@ -210,7 +288,7 @@ public class tallerPOO {
 				
 				
 				break;
-			case 3:
+			case 3: 
 				System.out.println("Saliendo...");
 				break;
 			
