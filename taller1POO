@@ -14,6 +14,7 @@ public class tallerPOO {
 		int opcion_menu1;
 		int opcion_usuarios;
 		int opcionModificar;
+		int opcionModificar2;
 		
 		do {
 			System.out.println("1) Menu de Usuarios \n2) Menu de Analisis \n3) Salir");
@@ -154,11 +155,10 @@ public class tallerPOO {
 										
 										break;
 									case 2:
-										// Modificar actividad
-										System.out.println("Cual actividad deseas modificar?\n");
-										opcionModificar = s.nextInt();
-										s.nextLine();
 										
+										// Modificar actividad
+								
+										String[] usuarios = new String[300];
 										String[] fechas = new String[300]; // 300 por ser la cant maxima de actividades
 										int[] horas = new int[300];
 										String[] actividades = new String[300];
@@ -173,16 +173,14 @@ public class tallerPOO {
 											String lineaReg = sarchReg.nextLine();
 											String[] partesReg = lineaReg.split(";");
 											
-											String usuarioReg = partesReg[0];
-											
-											//filtrar para mostrar solo las actividades del usuario ingresado
-											if ( usuarioReg.equals(nombre_usuario)) {
+											if (partesReg.length < 4) {
+												continue;
+											}
+									        	usuarios[contador] = partesReg[0];
 												fechas[contador] = partesReg[1];
 												horas[contador] = Integer.parseInt(partesReg[2]);
 												actividades[contador] = partesReg[3];
 												contador++;
-											}
-											
 											
 										} //while sarch hasnextline
 										sarchReg.close();
@@ -204,6 +202,10 @@ public class tallerPOO {
 												//Comparar e intercambiar
 												if (año1 > año2 || (año1 == año2 && mes1 > mes2) || (año1 == año2 && mes1 == mes2 && dia1 > dia2)) {
 													
+													String auxUsuarios = usuarios[j];
+													usuarios[j] = usuarios[j+1];
+													usuarios[j+1] = auxUsuarios;
+													
 													String auxFecha = fechas[j];
 													fechas[j] = fechas[j+1];
 													fechas[j+1] = auxFecha;
@@ -220,23 +222,103 @@ public class tallerPOO {
 													}
 												}
 											}
-										//mostrar registro
-										if (contador == 0) {
+										
+										//filtrar para mostrar solo las actividades del usuario ingresado
+										
+										int[] indices = new int[300];
+										int contUser = 0;
+										
+										System.out.println("Cual actividad deseas modificar?\n");
+										System.out.println("0) Regresar.");
+										
+										for (int i = 0; i < contador; i++) {
+											if (usuarios[i].equals(nombre_usuario)) {
+												System.out.println((contUser + 1) + ")" + fechas[i] + ";" + horas[i] + ";" + actividades[i]);
+												indices[contUser] = i;
+												contUser++;
+											}
+										}
+										
+										if (contUser == 0) {
 											System.err.println("No hay actividades registradas.");
+											break;
+										}
+										
+										opcionModificar = s.nextInt();
+										s.nextLine();
+										
+										if (opcionModificar == 0) {
+											break;
+										}
+										
+										if (opcionModificar < 1 || opcionModificar > contUser) {
+											System.err.println("Opcion invalida.");
+										}
+										
+										int indice = indices[opcionModificar - 1];
+										
+										
+										while(true) {
+										
+										System.out.println("Que deseas modificar?");
+										System.out.println("0) Regresar \n1) Fecha \n2) Duracion \n3) Tipo de actividad");
+										opcionModificar2 = s.nextInt();
+										s.nextLine();
+										
+										if (opcionModificar2 == 0) {
+											break;
+										}
+										
+										switch (opcionModificar2) {
+										case 1: 
+											// Modificar fecha
+											System.out.println("0) Regresar. \nIngrese la nueva fecha (dd/mm/aaaa): ");	
+											String nuevaFecha2 = s.nextLine();
+											if (nuevaFecha2.equals("0")) {
+												break;
+											}
+											fechas[indice] = nuevaFecha2;
+											break;
+										case 2: 
+											//Modificar duracion
+											System.out.println("0) Regresar. \nIngrese la nueva duracion: ");
+											int nuevaHora = s.nextInt();
+											s.nextLine();
+											if (nuevaHora == 0) {
+												break;
+											}
 											
-										} else {
-											for (int i = 0; i < contador; i++) {
-												System.out.println((i + 1) + ") " + fechas[i] + ";" + horas[i] + ";" + actividades[i]);
-												
-											}	
-									}
+											horas[indice] = nuevaHora;
+											break;
+										case 3: 
+											//Modificar tipo de actividad
+											System.out.println("0) Regresar. \nIngrese el nuevo tipo de actividad: ");
+											String nuevaAct = s.nextLine();
+											if (nuevaAct.equals("0")) {
+												break;
+											}
+											
+											actividades[indice] = nuevaAct;
+											break;
+										default:
+											System.err.println("Ingrese una opcion valida.");
+										}
 										
-										
-										
-										
-										
-										
-										
+										//leer archivo para guardar los cambios
+										try {
+									        FileWriter fw = new FileWriter("Registros.txt");
+									        
+									        for (int i = 0; i < contador; i++) {
+												fw.write(usuarios[i] + ";" + fechas[i] + ";" + horas[i] + ";" + actividades[i] + "\n");
+											}
+									        
+									        fw.close();
+									        System.out.println("Actividad modificada correctamente.");
+									        
+										}catch (Exception e) {
+											System.err.println("Error al guardar el cambio.");
+										}
+									}   
 										break;
 									case 3:
 										//Eliminar actividad
