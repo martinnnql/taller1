@@ -75,6 +75,10 @@ public class tallerPOO {
 											System.out.println("Ingrese fecha de la actividad (dd/mm/aaaa): ");
 											nuevaFecha = s.nextLine();
 											
+											if (nuevaFecha.isEmpty()) { 
+												continue;
+											}
+											
 											String[] partesFecha = nuevaFecha.split("/");
 											
 											if (partesFecha.length != 3) {
@@ -260,6 +264,8 @@ public class tallerPOO {
 										
 										while(true) {
 										
+										boolean seModifico = false;	
+											
 										System.out.println("Que deseas modificar?");
 										System.out.println("0) Regresar \n1) Fecha \n2) Duracion \n3) Tipo de actividad");
 										opcionModificar2 = s.nextInt();
@@ -272,23 +278,105 @@ public class tallerPOO {
 										switch (opcionModificar2) {
 										case 1: 
 											// Modificar fecha
+											//falta control de errores para los 3 casos
+											
+											String nuevaFecha2;
+											boolean fechaValida2 = false;
+											
+											while (!fechaValida2) {
 											System.out.println("0) Regresar. \nIngrese la nueva fecha (dd/mm/aaaa): ");	
-											String nuevaFecha2 = s.nextLine();
+											nuevaFecha2 = s.nextLine();
 											if (nuevaFecha2.equals("0")) {
 												break;
 											}
+											if (nuevaFecha2.isEmpty()) {
+												continue;
+											}
+											
+											String[] partesFecha2 = nuevaFecha2.split("/");
+											
+											if (partesFecha2.length != 3) {
+												System.err.println("Fecha invalida Enter para reintentar.");
+												continue;
+											}
+											
+											try {
+												int dia = Integer.parseInt(partesFecha2[0]);
+												int mes = Integer.parseInt(partesFecha2[1]);
+												int año = Integer.parseInt(partesFecha2[2]);
+
+												if (año < 2000 || año > 9999) {
+													System.err.println("Fecha invalida Enter para reintentar.");
+													continue;
+												}
+												
+												if (mes > 12 || mes < 1) {
+													System.err.println("Fecha invalida Enter para reintentar.");
+													continue;
+												}
+												
+												int diasMax;
+												
+												switch (mes) {
+												case 4: case 6: case 9: case 11:
+													diasMax = 30;
+													break;
+												case 2:
+													diasMax = 28;
+													break;
+												default:
+													diasMax = 31;
+													break;
+												}
+											
+												if (dia < 1 || dia > diasMax) {
+													System.err.println("Fecha invalida pulsa Enter para reintentar.");
+													continue;
+												}
+												
+												fechaValida2 = true;
+												
+											} catch (NumberFormatException e) {
+												System.err.println("Ingrese solamente numeros.");
+											}
+											
 											fechas[indice] = nuevaFecha2;
+										    seModifico = true;
+
+										}
+											
 											break;
 										case 2: 
 											//Modificar duracion
-											System.out.println("0) Regresar. \nIngrese la nueva duracion: ");
-											int nuevaHora = s.nextInt();
-											s.nextLine();
-											if (nuevaHora == 0) {
-												break;
+											int nuevaHora = -1;
+
+											while (nuevaHora < 0) {
+											    System.out.println("0) Regresar. \nIngrese la nueva duracion: ");
+											    
+											    if (s.hasNextInt()) {
+											        nuevaHora = s.nextInt();
+											        s.nextLine();
+											        
+											        if (nuevaHora == 0) {
+											            break;
+											        }
+											        
+											        if (nuevaHora < 0) {
+											            System.err.println("Ingrese una duracion valida.");
+											        } else {
+											            horas[indice] = nuevaHora;
+											            seModifico = true;
+
+											            break;
+											        }
+											        
+											    } else {
+											        System.err.println("Ingrese solamente numeros.");
+											        s.nextLine(); // limpiar input
+											    }
 											}
 											
-											horas[indice] = nuevaHora;
+											
 											break;
 										case 3: 
 											//Modificar tipo de actividad
@@ -299,26 +387,30 @@ public class tallerPOO {
 											}
 											
 											actividades[indice] = nuevaAct;
+										    seModifico = true;
+
 											break;
 										default:
 											System.err.println("Ingrese una opcion valida.");
 										}
 										
 										//leer archivo para guardar los cambios
-										try {
-									        FileWriter fw = new FileWriter("Registros.txt");
-									        
-									        for (int i = 0; i < contador; i++) {
-												fw.write(usuarios[i] + ";" + fechas[i] + ";" + horas[i] + ";" + actividades[i] + "\n");
+										if (seModifico) {
+											try {
+										        FileWriter fw = new FileWriter("Registros.txt");
+										        
+										        for (int i = 0; i < contador; i++) {
+													fw.write(usuarios[i] + ";" + fechas[i] + ";" + horas[i] + ";" + actividades[i] + "\n");
+												}
+										        
+										        fw.close();
+										        System.out.println("Actividad modificada correctamente.");
+										        
+											}catch (Exception e) {
+												System.err.println("Error al guardar el cambio.");
 											}
-									        
-									        fw.close();
-									        System.out.println("Actividad modificada correctamente.");
-									        
-										}catch (Exception e) {
-											System.err.println("Error al guardar el cambio.");
-										}
-									}   
+										} 
+									}
 										break;
 									case 3:
 										//Eliminar actividad
