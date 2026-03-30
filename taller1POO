@@ -15,6 +15,7 @@ public class tallerPOO {
 		int opcion_usuarios;
 		int opcionModificar;
 		int opcionModificar2;
+		int opcionEl;
 		
 		do {
 			System.out.println("1) Menu de Usuarios \n2) Menu de Analisis \n3) Salir");
@@ -415,6 +416,133 @@ public class tallerPOO {
 									case 3:
 										//Eliminar actividad
 										
+										// mostar txt ordenado ( copie y pegue el codigo de modificar txt )
+										
+										String[] usuariosEl = new String[300];
+										String[] fechasEl = new String[300]; // 300 por ser la cant maxima de actividades
+										int[] horasEl = new int[300];
+										String[] actividadesEl = new String[300];
+										
+										int contadorEl = 0;
+										
+										// leer nuevamente el txt registros
+										File archRegEl = new File("Registros.txt");
+										Scanner sarchRegEl = new Scanner(archRegEl);
+										
+										while (sarchRegEl.hasNextLine()) {
+											String lineaRegEl = sarchRegEl.nextLine();
+											String[] partesRegEl = lineaRegEl.split(";");
+											
+											if (partesRegEl.length < 4) {
+												continue;
+											}
+									        	usuariosEl[contadorEl] = partesRegEl[0];
+												fechasEl[contadorEl] = partesRegEl[1];
+												horasEl[contadorEl] = Integer.parseInt(partesRegEl[2]);
+												actividadesEl[contadorEl] = partesRegEl[3];
+												contadorEl++;
+											
+										} //while sarch hasnextline
+										sarchRegEl.close();
+										
+										// ordenar fechas de mas viejo a mas nuevo con bubble sort
+										for (int i = 0; i < contadorEl - 1; i++) {
+											for (int j = 0; j < contadorEl - i - 1; j++) {
+												String[] fecha1El = fechasEl[j].split("/");
+												String[] fecha2El = fechasEl[j+1].split("/");
+												
+												int dia1El = Integer.parseInt(fecha1El[0]);
+												int mes1El = Integer.parseInt(fecha1El[1]);
+												int año1El = Integer.parseInt(fecha1El[2]);
+
+												int dia2El = Integer.parseInt(fecha2El[0]);
+												int mes2El = Integer.parseInt(fecha2El[1]);
+												int año2El = Integer.parseInt(fecha2El[2]);
+												
+												//Comparar e intercambiar
+												if (año1El > año2El || (año1El == año2El && mes1El > mes2El) || (año1El == año2El && mes1El == mes2El && dia1El > dia2El)) {
+													
+													String auxUsuariosEl = usuariosEl[j];
+													usuariosEl[j] = usuariosEl[j+1];
+													usuariosEl[j+1] = auxUsuariosEl;
+													
+													String auxFechaEl = fechasEl[j];
+													fechasEl[j] = fechasEl[j+1];
+													fechasEl[j+1] = auxFechaEl;
+													
+													int auxHorasEl = horasEl[j];
+													horasEl[j] = horasEl[j+1];
+													horasEl[j+1] = auxHorasEl;
+													
+													String auxActEl = actividadesEl[j];
+													actividadesEl[j] = actividadesEl[j+1];
+													actividadesEl[j+1] = auxActEl;
+													
+													
+													}
+												}
+											}
+										
+										//filtrar para mostrar solo las actividades del usuario ingresado
+										
+										int[] indicesEl = new int[300];
+										int contUserEl = 0;
+										
+										System.out.println("Cual actividad deseas eliminar?\n");
+										System.out.println("0) Regresar.");
+										
+										for (int i = 0; i < contadorEl; i++) {
+											if (usuariosEl[i].equals(nombre_usuario)) {
+												System.out.println((contUserEl + 1) + ")" + fechasEl[i] + ";" + horasEl[i] + ";" + actividadesEl[i]);
+												indicesEl[contUserEl] = i;
+												contUserEl++;
+											}
+										}
+										
+										if (contUserEl == 0) {
+											System.err.println("No hay actividades registradas.");
+											break;
+										}
+										
+										opcionEl = s.nextInt();
+										s.nextLine();
+										
+										if (opcionEl == 0) {
+											break;
+										}
+										
+										if (opcionEl < 1 || opcionEl > contUserEl) {
+											System.err.println("Opcion invalida.");
+										}
+										
+										int indiceEl = indicesEl[opcionEl - 1];
+										
+										//Eliminar actividad del txt
+										for (int i = indiceEl; i < contadorEl - 1; i++) {
+											usuariosEl[i] = usuariosEl[i+1];
+											fechasEl[i] = fechasEl[i+1];
+											horasEl[i] = horasEl[i+1];
+											actividadesEl[i] = actividadesEl[i+1];
+											
+											
+										}// corchete for eliminar act
+										
+										contadorEl--;
+										
+										//guardar el arch sin la actividad q se elimino
+										try {
+									        FileWriter fw = new FileWriter("Registros.txt");
+									        
+									        for (int i = 0; i < contadorEl; i++) {
+												fw.write(usuariosEl[i] + ";" + fechasEl[i] + ";" + horasEl[i] + ";" + actividadesEl[i] + "\n");
+											}
+									        
+									        fw.close();
+									        System.out.println("Actividad eliminada correctamente.");
+									        
+										}catch (Exception e) {
+											System.err.println("Error al eliminar la actividad.");
+										}
 										
 										
 										
